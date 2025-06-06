@@ -17,6 +17,9 @@ importers:
       hono:
         specifier: ^4.7.11
         version: 4.7.11
+      stoker:
+        specifier: ^1.4.2
+        version: 1.4.2(@asteasolutions/zod-to-openapi@7.3.3(zod@3.25.55))(@hono/zod-openapi@0.19.8(hono@4.7.11)(zod@3.25.55))(hono@4.7.11)(openapi3-ts@4.4.0)
       zod:
         specifier: ^3.25.55
         version: 3.25.55
@@ -1508,6 +1511,17 @@ packages:
   stable-hash-x@0.1.1:
     resolution: {integrity: sha512-l0x1D6vhnsNUGPFVDx45eif0y6eedVC8nm5uACTrVFJFtl2mLRW17aWtVyxFCpn5t94VUPkjU8vSLwIuwwqtJQ==}
     engines: {node: '>=12.0.0'}
+
+  stoker@1.4.2:
+    resolution: {integrity: sha512-zna86ZzC3fnMOIkuO+1vRMfcRw7SpC/7yafRb0u8DwDVig2pPh6POVnGB7t2A5t/rMvyr7hE7tjXTPvW8bhJKg==}
+    peerDependencies:
+      '@asteasolutions/zod-to-openapi': ^7.0.0
+      '@hono/zod-openapi': '>=0.16.0'
+      hono: ^4.0.0
+      openapi3-ts: ^4.4.0
+    peerDependenciesMeta:
+      '@hono/zod-openapi':
+        optional: true
 
   strip-indent@4.0.0:
     resolution: {integrity: sha512-mnVSV2l+Zv6BLpSD/8V87CW/y9EmmbYzGCIavsnsI6/nwn26DwffM/yztm30Z/I2DY9wdS3vXVCMnHDgZaVNoA==}
@@ -3275,6 +3289,14 @@ snapshots:
   spdx-license-ids@3.0.21: {}
 
   stable-hash-x@0.1.1: {}
+
+  stoker@1.4.2(@asteasolutions/zod-to-openapi@7.3.3(zod@3.25.55))(@hono/zod-openapi@0.19.8(hono@4.7.11)(zod@3.25.55))(hono@4.7.11)(openapi3-ts@4.4.0):
+    dependencies:
+      '@asteasolutions/zod-to-openapi': 7.3.3(zod@3.25.55)
+      hono: 4.7.11
+      openapi3-ts: 4.4.0
+    optionalDependencies:
+      '@hono/zod-openapi': 0.19.8(hono@4.7.11)(zod@3.25.55)
 
   strip-indent@4.0.0:
     dependencies:
