@@ -6,7 +6,9 @@ import { pinoLogger } from "@/middlewares/pino.logger.js";
 import type { AppBindings } from "./types.js";
 
 export default function createApp() {
-  const app = new OpenAPIHono<AppBindings>();
+  const app = new OpenAPIHono<AppBindings>({
+    strict: false,
+  });
 
   app.use(serveEmojiFavicon("📝"));
   app.use(pinoLogger ());
