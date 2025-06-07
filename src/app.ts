@@ -1,11 +1,9 @@
 import type { PinoLogger } from "hono-pino";
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { config } from "dotenv";
-import { expand } from "dotenv-expand";
-import { notFound, onError } from "stoker/middlewares";
-import { pinoLogger } from "./middlewares/pino.logger.js";
 
-expand(config());
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { notFound, onError } from "stoker/middlewares";
+
+import { pinoLogger } from "./middlewares/pino.logger.js";
 
 interface AppBindings {
   Variables: {
