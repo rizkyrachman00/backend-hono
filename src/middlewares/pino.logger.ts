@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import pino from "pino";
 import pretty from "pino-pretty";
 
-import env from "@/env";
+import env from "@/env.js";
 
 export function pinoLogger() {
   return logger({
