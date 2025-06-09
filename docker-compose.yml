@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend_blackboxcamp:
+    image: postgres
+    restart: always
+    container_name: pgsql_blackbox
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: blackboxdb
+      POSTGRES_USER: gymapp
+      POSTGRES_PASSWORD: strongpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
