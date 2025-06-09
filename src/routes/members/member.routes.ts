@@ -2,7 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 
-const list = createRoute({
+export  const list = createRoute({
   path: "/members",
   method: "get",
   responses: {
