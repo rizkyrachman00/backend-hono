@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, serial, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const memberType = pgEnum("member_type", ["member", "guest"]);
 
@@ -9,7 +9,7 @@ export const members = pgTable("members", {
   email: varchar("email", { length: 100 }),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -19,7 +19,7 @@ export const branches = pgTable("branches", {
   name: text("name").notNull(),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -28,7 +28,7 @@ export const membershipCards = pgTable("membership_cards", {
   memberId: uuid("member_id").references(() => members.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -38,7 +38,7 @@ export const membershipCardBranches = pgTable("membership_card_branches", {
   branchId: uuid("branch_id").references(() => branches.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -50,7 +50,7 @@ export const subscriptions = pgTable("subscriptions", {
   createdBy: text("created_by"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -60,7 +60,7 @@ export const guests = pgTable("guests", {
   phone: varchar("phone", { length: 15 }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
@@ -74,6 +74,6 @@ export const visitLogs = pgTable("visit_logs", {
   type: memberType("type").default("guest").notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
