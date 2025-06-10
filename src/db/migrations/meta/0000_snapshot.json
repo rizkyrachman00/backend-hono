@@ -1,5 +1,5 @@
 {
-  "id": "32c31f52-c79d-4ebb-af91-c5c9cdf9bf88",
+  "id": "86265fae-7d71-439a-80b7-f79cee78b2dc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -135,7 +135,7 @@
           "name": "phone",
           "type": "varchar(15)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",

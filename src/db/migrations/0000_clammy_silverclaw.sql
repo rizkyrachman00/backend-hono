@@ -21,7 +21,7 @@ CREATE TABLE "guests" (
 CREATE TABLE "members" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
-	"phone" varchar(15),
+	"phone" varchar(15) NOT NULL,
 	"email" varchar(100),
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp,
