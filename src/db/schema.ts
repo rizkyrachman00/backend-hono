@@ -1,9 +1,9 @@
-import { integer, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, serial, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const memberType = pgEnum("member_type", ["member", "guest"]);
 
 export const members = pgTable("members", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   phone: varchar("phone", { length: 15 }).unique(),
   email: varchar("email", { length: 100 }),
@@ -14,7 +14,7 @@ export const members = pgTable("members", {
 });
 
 export const branches = pgTable("branches", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   identifier: text("identifier").unique().notNull(),
   name: text("name").notNull(),
 
@@ -24,8 +24,8 @@ export const branches = pgTable("branches", {
 });
 
 export const membershipCards = pgTable("membership_cards", {
-  id: serial("id").primaryKey(),
-  memberId: integer("member_id").references(() => members.id, { onDelete: "cascade" }),
+  id: uuid("id").primaryKey().defaultRandom(),
+  memberId: uuid("member_id").references(() => members.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
@@ -33,8 +33,9 @@ export const membershipCards = pgTable("membership_cards", {
 });
 
 export const membershipCardBranches = pgTable("membership_card_branches", {
-  membershipCardId: integer("membership_card_id").references(() => membershipCards.id, { onDelete: "cascade" }),
-  branchId: integer("branch_id").references(() => branches.id, { onDelete: "cascade" }),
+  id: uuid("id").primaryKey().defaultRandom(),
+  membershipCardId: uuid("membership_card_id").references(() => membershipCards.id, { onDelete: "cascade" }),
+  branchId: uuid("branch_id").references(() => branches.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
@@ -42,8 +43,8 @@ export const membershipCardBranches = pgTable("membership_card_branches", {
 });
 
 export const subscriptions = pgTable("subscriptions", {
-  id: serial("id").primaryKey(),
-  membershipCardId: integer("membership_card_id").references(() => membershipCards.id, { onDelete: "cascade" }),
+  id: uuid("id").primaryKey().defaultRandom(),
+  membershipCardId: uuid("membership_card_id").references(() => membershipCards.id, { onDelete: "cascade" }),
   activeSince: timestamp("active_since").notNull(),
   activeUntil: timestamp("active_until").notNull(),
   createdBy: text("created_by"),
@@ -54,7 +55,7 @@ export const subscriptions = pgTable("subscriptions", {
 });
 
 export const guests = pgTable("guests", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   phone: varchar("phone", { length: 15 }),
 
@@ -64,11 +65,11 @@ export const guests = pgTable("guests", {
 });
 
 export const visitLogs = pgTable("visit_logs", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
 
-  memberId: integer("member_id").references(() => members.id, { onDelete: "set null" }),
-  guestId: integer("guest_id").references(() => guests.id, { onDelete: "set null" }),
-  branchId: integer("branch_id").references(() => branches.id, { onDelete: "cascade" }),
+  memberId: uuid("member_id").references(() => members.id, { onDelete: "set null" }),
+  guestId: uuid("guest_id").references(() => guests.id, { onDelete: "set null" }),
+  branchId: uuid("branch_id").references(() => branches.id, { onDelete: "cascade" }),
 
   type: memberType("type").default("guest").notNull(),
 

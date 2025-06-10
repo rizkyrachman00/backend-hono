@@ -1,6 +1,6 @@
 CREATE TYPE "public"."member_type" AS ENUM('member', 'guest');--> statement-breakpoint
 CREATE TABLE "branches" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"identifier" text NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now(),
@@ -10,7 +10,7 @@ CREATE TABLE "branches" (
 );
 --> statement-breakpoint
 CREATE TABLE "guests" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"phone" varchar(15),
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE "guests" (
 );
 --> statement-breakpoint
 CREATE TABLE "members" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"phone" varchar(15),
 	"email" varchar(100),
@@ -30,24 +30,25 @@ CREATE TABLE "members" (
 );
 --> statement-breakpoint
 CREATE TABLE "membership_card_branches" (
-	"membership_card_id" integer,
-	"branch_id" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"membership_card_id" uuid,
+	"branch_id" uuid,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "membership_cards" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"member_id" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"member_id" uuid,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"membership_card_id" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"membership_card_id" uuid,
 	"active_since" timestamp NOT NULL,
 	"active_until" timestamp NOT NULL,
 	"created_by" text,
@@ -57,10 +58,10 @@ CREATE TABLE "subscriptions" (
 );
 --> statement-breakpoint
 CREATE TABLE "visit_logs" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"member_id" integer,
-	"guest_id" integer,
-	"branch_id" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"member_id" uuid,
+	"guest_id" uuid,
+	"branch_id" uuid,
 	"type" "member_type" DEFAULT 'guest' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,

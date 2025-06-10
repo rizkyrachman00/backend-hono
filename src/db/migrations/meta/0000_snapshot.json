@@ -1,5 +1,5 @@
 {
-  "id": "31c58b87-c480-4355-af3c-f6969b6421ee",
+  "id": "1b9280d2-9993-4309-a1e6-3a35b410c5d8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,9 +10,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "identifier": {
           "name": "identifier",
@@ -69,9 +70,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -120,9 +122,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -183,15 +186,22 @@
       "name": "membership_card_branches",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
         "membership_card_id": {
           "name": "membership_card_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "branch_id": {
           "name": "branch_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -257,13 +267,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "member_id": {
           "name": "member_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -316,13 +327,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "membership_card_id": {
           "name": "membership_card_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -393,25 +405,26 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "member_id": {
           "name": "member_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "guest_id": {
           "name": "guest_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "branch_id": {
           "name": "branch_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
