@@ -5,6 +5,6 @@ import * as routes from "./member.routes.js";
 
 const router = createRouter()
   .openapi(routes.list, handlers.list)
-  .openapi(routes.create, () => {});
+  .openapi(routes.create, handlers.create);
 
 export default router;
