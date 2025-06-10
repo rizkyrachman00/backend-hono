@@ -5,7 +5,7 @@ export const memberType = pgEnum("member_type", ["member", "guest"]);
 export const members = pgTable("members", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  phone: varchar("phone", { length: 15 }).unique(),
+  phone: varchar("phone", { length: 15 }).unique().notNull(),
   email: varchar("email", { length: 100 }),
 
   createdAt: timestamp("created_at").defaultNow(),

@@ -12,7 +12,8 @@ export const list = createRoute({
     [HTTPStatusCode.OK]: jsonContent(
       z.array(z.object({
         name: z.string(),
-        done: z.boolean(),
+        phone: z.string(),
+        email: z.string().nullable(),
       })),
       "List gym members",
     ),
