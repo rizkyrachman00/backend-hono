@@ -1,4 +1,5 @@
 import { pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
 
 export const memberType = pgEnum("member_type", ["member", "guest"]);
 
@@ -12,6 +13,8 @@ export const members = pgTable("members", {
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
+
+export const membersSelectSchema = createSelectSchema(members);
 
 export const branches = pgTable("branches", {
   id: uuid("id").primaryKey().defaultRandom(),
