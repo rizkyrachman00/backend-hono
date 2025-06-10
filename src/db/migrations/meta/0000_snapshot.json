@@ -1,5 +1,5 @@
 {
-  "id": "1b9280d2-9993-4309-a1e6-3a35b410c5d8",
+  "id": "32c31f52-c79d-4ebb-af91-c5c9cdf9bf88",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -38,8 +38,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -98,8 +97,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -156,8 +154,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -216,8 +213,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -289,8 +285,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -367,8 +362,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -447,8 +441,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         },
         "deleted_at": {
           "name": "deleted_at",

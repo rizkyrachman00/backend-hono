@@ -4,7 +4,7 @@ CREATE TABLE "branches" (
 	"identifier" text NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp,
 	CONSTRAINT "branches_identifier_unique" UNIQUE("identifier")
 );
@@ -14,7 +14,7 @@ CREATE TABLE "guests" (
 	"name" text NOT NULL,
 	"phone" varchar(15),
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -24,7 +24,7 @@ CREATE TABLE "members" (
 	"phone" varchar(15),
 	"email" varchar(100),
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp,
 	CONSTRAINT "members_phone_unique" UNIQUE("phone")
 );
@@ -34,7 +34,7 @@ CREATE TABLE "membership_card_branches" (
 	"membership_card_id" uuid,
 	"branch_id" uuid,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -42,7 +42,7 @@ CREATE TABLE "membership_cards" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"member_id" uuid,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -53,7 +53,7 @@ CREATE TABLE "subscriptions" (
 	"active_until" timestamp NOT NULL,
 	"created_by" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -64,7 +64,7 @@ CREATE TABLE "visit_logs" (
 	"branch_id" uuid,
 	"type" "member_type" DEFAULT 'guest' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
