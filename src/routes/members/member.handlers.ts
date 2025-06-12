@@ -1,4 +1,5 @@
 import * as HTTPStatusCode from "stoker/http-status-codes";
+import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/lib/types.js";
 
@@ -27,7 +28,9 @@ export const getOne: AppRouteHandler<GetOneMemberRoutes> = async (c) => {
   });
 
   if (!member) {
-    return c.json({ message: "Member not found." }, HTTPStatusCode.NOT_FOUND);
+    return c.json({
+      message: HttpStatusPhrases.NOT_FOUND,
+    }, HTTPStatusCode.NOT_FOUND);
   }
 
   return c.json(member, HTTPStatusCode.OK);

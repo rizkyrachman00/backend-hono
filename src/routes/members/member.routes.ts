@@ -4,6 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { membersInsertSchema, membersSelectSchema } from "@/db/schema.js";
+import { notFoundSchema } from "@/lib/constants.js";
 import IdParamsSchema from "@/openapi/schemas/id-params.js";
 
 const tags = ["Members"];
@@ -59,11 +60,7 @@ export const getOne = createRoute({
     ),
 
     [HTTPStatusCode.NOT_FOUND]: jsonContent(
-      z.object({
-        message: z.string(),
-      }).openapi({
-        example: { message: "Member not found." },
-      }),
+      notFoundSchema,
       "Member not found",
     ),
 
