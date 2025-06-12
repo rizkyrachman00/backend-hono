@@ -4,6 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { membersInsertSchema, membersSelectSchema } from "@/db/schema.js";
+import IdParamsSchema from "@/openapi/schemas/id-params.js";
 
 const tags = ["Members"];
 
@@ -39,6 +40,26 @@ export const create = createRoute({
     [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(membersInsertSchema),
       "Unprocessable Entity. Validation error(s), Please check the request body.",
+    ),
+  },
+});
+
+// GET /members/{id}
+export const getOne = createRoute({
+  path: "/members/{id}",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  tags,
+  responses: {
+    [HTTPStatusCode.OK]: jsonContent(
+      membersSelectSchema,
+      "Request gym member by id",
+    ),
+    [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Invalid Id Error.",
     ),
   },
 });
