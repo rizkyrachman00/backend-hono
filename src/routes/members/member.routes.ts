@@ -57,6 +57,16 @@ export const getOne = createRoute({
       membersSelectSchema,
       "Request gym member by id",
     ),
+
+    [HTTPStatusCode.NOT_FOUND]: jsonContent(
+      z.object({
+        message: z.string(),
+      }).openapi({
+        example: { message: "Member not found." },
+      }),
+      "Member not found",
+    ),
+
     [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(IdParamsSchema),
       "Invalid Id Error.",
@@ -66,3 +76,4 @@ export const getOne = createRoute({
 
 export type ListMemberRoutes = typeof list;
 export type CreateMemberRoutes = typeof create;
+export type GetOneMemberRoutes = typeof getOne;
