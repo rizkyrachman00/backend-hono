@@ -16,6 +16,7 @@ export const members = pgTable("members", {
 
 export const membersSelectSchema = createSelectSchema(members);
 export const membersInsertSchema = createInsertSchema(members, { name: schema => schema.name.min(1), email: schema => schema.email.email() }).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
+export const membersPatchSchema = membersInsertSchema.partial();
 
 export const branches = pgTable("branches", {
   id: uuid("id").primaryKey().defaultRandom(),
