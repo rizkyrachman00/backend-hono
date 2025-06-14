@@ -7,7 +7,7 @@ import type { AppRouteHandler } from "@/lib/types.js";
 import db from "@/db/index.js";
 import { members } from "@/db/schema.js";
 
-import type { CreateMemberRoutes, GetOneMemberRoutes, ListMemberRoutes, PatchMemberRoutes } from "./member.routes.js";
+import type { CreateMemberRoutes, GetOneMemberRoutes, ListMemberRoutes, PatchMemberRoutes, RemoveMemberRoutes } from "./member.routes.js";
 
 export const list: AppRouteHandler<ListMemberRoutes> = async (c) => {
   const members = await db.query.members.findMany();
@@ -49,4 +49,19 @@ export const patch: AppRouteHandler<PatchMemberRoutes> = async (c) => {
   }
 
   return c.json(member, HTTPStatusCode.OK);
+};
+
+export const remove: AppRouteHandler<RemoveMemberRoutes> = async (c) => {
+  const { id } = c.req.valid("param");
+  const result = await db.delete(members).where(eq(members.id, id)).returning();
+
+  if (result.length === 0) {
+    return c.json({
+      message: HttpStatusPhrases.NOT_FOUND,
+    }, HTTPStatusCode.NOT_FOUND);
+  }
+
+  return c.json({
+    message: "Member successfully deleted",
+  }, HTTPStatusCode.OK);
 };
