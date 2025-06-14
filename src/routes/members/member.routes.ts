@@ -88,6 +88,12 @@ export const patch = createRoute({
       membersSelectSchema,
       "Updated gym member",
     ),
+
+    [HTTPStatusCode.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      "Member not found",
+    ),
+
     [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(membersPatchSchema).or(createErrorSchema(IdParamsSchema)),
       "Unprocessable Entity. Validation error(s), Please check the request body.",
@@ -98,3 +104,4 @@ export const patch = createRoute({
 export type ListMemberRoutes = typeof list;
 export type CreateMemberRoutes = typeof create;
 export type GetOneMemberRoutes = typeof getOne;
+export type PatchMemberRoutes = typeof patch;
