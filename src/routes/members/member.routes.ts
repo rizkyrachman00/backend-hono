@@ -101,7 +101,33 @@ export const patch = createRoute({
   },
 });
 
+// DELETE /members/{id}
+export const remove = createRoute({
+  path: "/member/{id}",
+  method: "delete",
+  request: {
+    params: IdParamsSchema,
+  },
+  tags,
+  responses: {
+    [HTTPStatusCode.NO_CONTENT]: {
+      description: "Deleted gym member",
+    },
+
+    [HTTPStatusCode.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      "Member not found",
+    ),
+
+    [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Invalid Id Error.",
+    ),
+  },
+});
+
 export type ListMemberRoutes = typeof list;
 export type CreateMemberRoutes = typeof create;
 export type GetOneMemberRoutes = typeof getOne;
 export type PatchMemberRoutes = typeof patch;
+export type RemoveMemberRoutes = typeof remove;
