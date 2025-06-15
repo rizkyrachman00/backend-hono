@@ -86,3 +86,5 @@ export const visitLogs = pgTable("visit_logs", {
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
+
+export const visitLogsSelectSchema = createSelectSchema(visitLogs);
