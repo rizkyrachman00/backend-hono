@@ -28,6 +28,10 @@ export const branches = pgTable("branches", {
   deletedAt: timestamp("deleted_at"),
 });
 
+export const branchesSelectSchema = createSelectSchema(branches);
+export const branchesInsertSchema = createInsertSchema(branches, { name: schema => schema.name.min(1), identifier: schema => schema.identifier.min(1) }).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
+export const branchesPatchSchema = branchesInsertSchema.partial();
+
 export const membershipCards = pgTable("membership_cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   memberId: uuid("member_id").references(() => members.id, { onDelete: "cascade" }),
