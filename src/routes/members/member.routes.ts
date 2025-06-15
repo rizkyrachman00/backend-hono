@@ -24,7 +24,7 @@ export const list = createRoute({
 
 // POST /members
 export const create = createRoute({
-  path: "/members",
+  path: "/member",
   method: "post",
   request: {
     body: jsonContentRequired(
@@ -47,7 +47,7 @@ export const create = createRoute({
 
 // GET /members/{id}
 export const getOne = createRoute({
-  path: "/members/{id}",
+  path: "/member/{id}",
   method: "get",
   request: {
     params: IdParamsSchema,
