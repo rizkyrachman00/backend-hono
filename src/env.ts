@@ -11,7 +11,7 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().default(5658),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
   DATABASE_URL: z.string().url(),
-  CLERK_JWT_KEY: z.string().min(1, "CLERK_JWT_KEY is required"),
+  CLERK_JWT_KEY: z.string().min(1, "CLERK_JWT_KEY is required").transform(v => v.replace(/\\n/g, "\n").trim()),
 });
 
 export type env = z.infer<typeof EnvSchema>;

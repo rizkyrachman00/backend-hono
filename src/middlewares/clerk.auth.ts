@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 
-import { verifyToken } from "@clerk/backend";
+import { verifyJwt } from "@clerk/backend/jwt";
 import * as HTTPStatusCode from "stoker/http-status-codes";
 
 import env from "@/env.js";
@@ -15,8 +15,8 @@ export const clerkAuthMiddleware: MiddlewareHandler = async (c, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const payload = await verifyToken(token, {
-      secretKey: env.CLERK_JWT_KEY!,
+    const payload = await verifyJwt(token, {
+      key: env.CLERK_JWT_KEY,
     });
 
     c.set("user", payload);
