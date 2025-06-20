@@ -1,5 +1,7 @@
 import configureOpenAPI from "./lib/configure.open.api.js";
 import createApp from "./lib/create.app.js";
+import { clerkAuthMiddleware } from "./middlewares/clerk.auth.js";
+import { requireAdminMiddleware } from "./middlewares/require.admin.js";
 import branches from "./routes/branches/branch.index.js";
 import index from "./routes/index.route.js";
 import members from "./routes/members/member.index.js";
@@ -7,17 +9,32 @@ import visitLogs from "./routes/visit-logs/visit-log.index.js";
 
 const app = createApp();
 
-const routes = [
+configureOpenAPI(app);
+
+// Public access
+const publicAccessRoutes = [
   index,
-  members,
   branches,
   visitLogs,
 ];
 
-configureOpenAPI(app);
-
-routes.forEach((route) => {
+publicAccessRoutes.forEach((route) => {
   app.route("/", route);
 });
+
+// Admin access
+const adminAccessRoutes = [
+  members,
+];
+
+const adminRestrictedRouter = createApp()
+  .use(clerkAuthMiddleware)
+  .use(requireAdminMiddleware);
+
+adminAccessRoutes.forEach((route) => {
+  adminRestrictedRouter.route("/", route);
+});
+
+app.route("/", adminRestrictedRouter);
 
 export default app;

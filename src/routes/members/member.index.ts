@@ -1,14 +1,9 @@
 import { createRouter } from "@/lib/create.app.js";
-import { clerkAuthMiddleware } from "@/middlewares/clerk.auth.js";
-import { requireAdminMiddleware } from "@/middlewares/require.admin.js";
 
 import * as handlers from "./member.handlers.js";
 import * as routes from "./member.routes.js";
 
 const router = createRouter();
-
-router.use(clerkAuthMiddleware);
-router.use(requireAdminMiddleware);
 
 router
   .openapi(routes.list, handlers.list)
