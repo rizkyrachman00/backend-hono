@@ -5,6 +5,7 @@ import { requireAdminMiddleware } from "./middlewares/require.admin.js";
 import branches from "./routes/branches/branch.index.js";
 import index from "./routes/index.route.js";
 import members from "./routes/members/member.index.js";
+import subscriptions from "./routes/subscriptions/subscription.index.js";
 import visitLogs from "./routes/visit-logs/visit-log.index.js";
 
 const app = createApp();
@@ -25,6 +26,7 @@ publicAccessRoutes.forEach((route) => {
 // Admin access
 const adminAccessRoutes = [
   members,
+  subscriptions,
 ];
 
 const adminRestrictedRouter = createApp()

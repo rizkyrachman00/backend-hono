@@ -1,3 +1,5 @@
+import type { InferSelectModel } from "drizzle-orm";
+
 import { pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -17,6 +19,8 @@ export const members = pgTable("members", {
 export const membersSelectSchema = createSelectSchema(members);
 export const membersInsertSchema = createInsertSchema(members, { name: schema => schema.name.min(1), email: schema => schema.email.email() }).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
 export const membersPatchSchema = membersInsertSchema.partial();
+export type Member = InferSelectModel<typeof members>;
+export type MemberId = Member["id"];
 
 export const branches = pgTable("branches", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -41,6 +45,10 @@ export const membershipCards = pgTable("membership_cards", {
   deletedAt: timestamp("deleted_at"),
 });
 
+export const membershipCardsSelectSchema = createSelectSchema(membershipCards);
+export const membershipCardsInsertSchema = createInsertSchema(membershipCards).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
+export const membershipCardsPatchSchema = membershipCardsInsertSchema.partial();
+
 export const membershipCardBranches = pgTable("membership_card_branches", {
   id: uuid("id").primaryKey().defaultRandom(),
   membershipCardId: uuid("membership_card_id").references(() => membershipCards.id, { onDelete: "cascade" }),
@@ -50,6 +58,10 @@ export const membershipCardBranches = pgTable("membership_card_branches", {
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
+
+export const membershipCardBranchesSelectSchema = createSelectSchema(membershipCardBranches);
+export const membershipCardBranchesInsertSchema = createInsertSchema(membershipCardBranches).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
+export const membershipCardBranchesPatchSchema = membershipCardBranchesInsertSchema.partial();
 
 export const subscriptions = pgTable("subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -62,6 +74,10 @@ export const subscriptions = pgTable("subscriptions", {
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
   deletedAt: timestamp("deleted_at"),
 });
+
+export const subscriptionsSelectSchema = createSelectSchema(subscriptions);
+export const subscriptionsInsertSchema = createInsertSchema(subscriptions).omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true });
+export const subscriptionsPatchSchema = subscriptionsInsertSchema.partial();
 
 export const guests = pgTable("guests", {
   id: uuid("id").primaryKey().defaultRandom(),
