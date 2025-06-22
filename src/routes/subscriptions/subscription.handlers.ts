@@ -17,7 +17,7 @@ import type { CreateSubscriptionRoutes } from "./subscription.routes.js";
 
 export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
   const { member, branchIds, activeSince, activeUntil } = c.req.valid("json");
-  const createdBy = c.get("authUser")?.email ?? "system";
+  const createdBy = c.get("user")?.email ?? "system";
 
   // 1. Cek apakah member sudah ada (berdasarkan phone dan/atau email)
   const existing = await db.query.members.findFirst({

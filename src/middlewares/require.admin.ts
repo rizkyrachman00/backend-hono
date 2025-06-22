@@ -9,5 +9,14 @@ export const requireAdminMiddleware: MiddlewareHandler = async (c, next) => {
     return c.json({ message: "Forbidden: Admins only" }, HTTPStatusCode.FORBIDDEN);
   }
 
+  if (!("email" in user) || typeof user.email !== "string") {
+    return c.json(
+      { message: "Invalid token: email missing" },
+      HTTPStatusCode.FORBIDDEN,
+    );
+  }
+
+  c.set("user", { email: user.email, role: user.role });
+
   await next();
 };
