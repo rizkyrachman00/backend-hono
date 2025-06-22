@@ -1,26 +1,13 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import {
-  membersInsertSchema,
-  subscriptionsSelectSchema,
-} from "@/db/schema.js";
+import { createSubscriptionBody, createSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
 
 const tags = ["Subscriptions"];
 
-const createSubscriptionBody = z.object({
-  member: membersInsertSchema,
-  branchIds: z.array(z.string().uuid()).min(1, "Minimal 1 cabang wajib"),
-  activeSince: z.string().datetime(),
-  activeUntil: z.string().datetime(),
-});
-
-const createSubscriptionResponse = z.object({
-  subscription: subscriptionsSelectSchema,
-});
-
+// POST /subscription
 export const create = createRoute({
   path: "/subscription",
   method: "post",
@@ -43,4 +30,18 @@ export const create = createRoute({
   },
 });
 
+// GET /subscriptions
+export const list = createRoute({
+  method: "get",
+  path: "/subscriptions",
+  tags,
+  responses: {
+    [HTTPStatusCode.OK]: jsonContent(
+      memberWithSubscriptionsListResponseSchema,
+      "List of members and their subscriptions",
+    ),
+  },
+});
+
 export type CreateSubscriptionRoutes = typeof create;
+export type ListSubscriptionsRoute = typeof list;
