@@ -3,7 +3,7 @@ import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { createSubscriptionBody, createSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
+import { createSubscriptionBody, createSubscriptionResponse, extendSubscriptionBody, extendSubscriptionErrorResponse, extendSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
 
 const tags = ["Subscriptions"];
 
@@ -43,5 +43,25 @@ export const list = createRoute({
   },
 });
 
+export const extend = createRoute({
+  method: "post",
+  path: "/subscription/extend",
+  tags,
+  request: {
+    body: jsonContentRequired(extendSubscriptionBody, "Tambahkan subscription baru"),
+  },
+  responses: {
+    [HTTPStatusCode.CREATED]: jsonContent(
+      extendSubscriptionResponse,
+      "Subscription baru berhasil ditambahkan",
+    ),
+    [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
+      extendSubscriptionErrorResponse,
+      "Validasi gagal",
+    ),
+  },
+});
+
 export type CreateSubscriptionRoutes = typeof create;
 export type ListSubscriptionsRoute = typeof list;
+export type ExtendSubscriptionRoutes = typeof extend;

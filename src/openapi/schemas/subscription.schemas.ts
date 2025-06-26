@@ -36,3 +36,26 @@ export const memberWithSubscriptionsSchema = z.object({
 
 // GET /subscriptions
 export const memberWithSubscriptionsListResponseSchema = z.array(memberWithSubscriptionsSchema);
+
+// --- Schema untuk request extend subscription ---
+export const extendSubscriptionBody = z.object({
+  membershipCardId: z.string().uuid(),
+  activeSince: z.string().datetime(),
+  activeUntil: z.string().datetime(),
+  branches: z.array(z.string().uuid()),
+}).refine(data => new Date(data.activeUntil) > new Date(data.activeSince), {
+  message: "activeUntil must be after activeSince",
+  path: ["activeUntil"],
+});
+
+// --- Schema untuk response extend subscription ---
+export const extendSubscriptionResponse = z.object({
+  message: z.string(),
+  subscriptionId: z.string().uuid(),
+});
+
+// --- Schema untuk response extend subscription error ---
+export const extendSubscriptionErrorResponse = z.object({
+  message: z.string(),
+  invalidBranchIds: z.array(z.string().uuid()).optional(),
+});

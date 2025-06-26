@@ -1,4 +1,4 @@
-import { eq, or } from "drizzle-orm";
+import { eq, inArray, or } from "drizzle-orm";
 import * as HTTPStatusCode from "stoker/http-status-codes";
 
 import type { MemberId } from "@/db/schema.js";
@@ -14,7 +14,7 @@ import {
   subscriptions,
 } from "@/db/schema.js";
 
-import type { CreateSubscriptionRoutes, ListSubscriptionsRoute } from "./subscription.routes.js";
+import type { CreateSubscriptionRoutes, ExtendSubscriptionRoutes, ListSubscriptionsRoute } from "./subscription.routes.js";
 
 // POST /subscription
 export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
@@ -137,4 +137,77 @@ export const list: AppRouteHandler<ListSubscriptionsRoute> = async (c) => {
   }
 
   return c.json(Array.from(groupedByMember.values()));
+};
+
+// POST /subscription/extend
+export const extend: AppRouteHandler<ExtendSubscriptionRoutes> = async (c) => {
+  const {
+    membershipCardId,
+    activeSince,
+    activeUntil,
+    branches: branchIds,
+  } = c.req.valid("json");
+
+  const createdBy = c.get("user")?.email ?? "system";
+
+  // 1. Validasi membership card
+  const cardExists = await db.query.membershipCards.findFirst({
+    where(fields, op) {
+      return op.eq(fields.id, membershipCardId);
+    },
+  });
+
+  if (!cardExists) {
+    return c.json(
+      { message: "Membership card not found" },
+      HTTPStatusCode.UNPROCESSABLE_ENTITY,
+    );
+  }
+
+  // 2. Validasi semua branchId
+  const existingBranches = await db
+    .select({ id: branches.id })
+    .from(branches)
+    .where(inArray(branches.id, branchIds));
+
+  const existingBranchIds = new Set(existingBranches.map(b => b.id));
+  const invalidBranchIds = branchIds.filter(id => !existingBranchIds.has(id));
+
+  if (invalidBranchIds.length > 0) {
+    return c.json(
+      {
+        message: "Some branchIds are invalid",
+        invalidBranchIds,
+      },
+      HTTPStatusCode.UNPROCESSABLE_ENTITY,
+    );
+  }
+
+  // 3. Insert new subscription
+  const [subscription] = await db.insert(subscriptions).values({
+    membershipCardId,
+    activeSince: new Date(activeSince),
+    activeUntil: new Date(activeUntil),
+    createdBy,
+  }).returning();
+
+  // 4. Hapus semua relasi cabang lama
+  await db
+    .delete(membershipCardBranches)
+    .where(eq(membershipCardBranches.membershipCardId, membershipCardId));
+
+  // 5. Tambahkan relasi cabang terbaru
+  if (branchIds.length > 0) {
+    await db.insert(membershipCardBranches).values(
+      branchIds.map(branchId => ({
+        membershipCardId,
+        branchId,
+      })),
+    );
+  }
+
+  return c.json({
+    message: "Subscription extended successfully",
+    subscriptionId: subscription.id,
+  }, HTTPStatusCode.CREATED);
 };
