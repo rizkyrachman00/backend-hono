@@ -11,6 +11,7 @@ import {
   members,
   membershipCardBranches,
   membershipCards,
+  subscriptionBranches,
   subscriptions,
 } from "@/db/schema.js";
 
@@ -72,6 +73,14 @@ export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
     })
     .returning();
 
+  // 5b. Kaitkan cabang ke subscription
+  await db.insert(subscriptionBranches).values(
+    branchIds.map(branchId => ({
+      subscriptionId: subscription.id,
+      branchId,
+    })),
+  );
+
   // 6. Kembalikan response sesuai schema openapi
   return c.json({ subscription }, HTTPStatusCode.CREATED);
 };
@@ -94,20 +103,18 @@ export const list: AppRouteHandler<ListSubscriptionsRoute> = async (c) => {
     .innerJoin(membershipCards, eq(subscriptions.membershipCardId, membershipCards.id))
     .innerJoin(members, eq(membershipCards.memberId, members.id));
 
-  const allCardBranches = await db
+  const allSubscriptionBranches = await db
     .select()
-    .from(membershipCardBranches)
-    .innerJoin(branches, eq(membershipCardBranches.branchId, branches.id));
+    .from(subscriptionBranches)
+    .innerJoin(branches, eq(subscriptionBranches.branchId, branches.id));
 
-  // Kelompokkan cabang berdasarkan ID kartu
+  // Kelompokkan cabang berdasarkan subscription ID
   const groupedBranches = new Map<string, typeof branches.$inferSelect[]>();
-  for (const row of allCardBranches) {
-    const membershipCardId = row.membership_card_branches.membershipCardId;
-    if (!membershipCardId)
-      continue;
-    const list = groupedBranches.get(membershipCardId) ?? [];
+  for (const row of allSubscriptionBranches) {
+    const subscriptionId = row.subscription_branches.subscriptionId;
+    const list = groupedBranches.get(subscriptionId) ?? [];
     list.push(row.branches);
-    groupedBranches.set(membershipCardId, list);
+    groupedBranches.set(subscriptionId, list);
   }
 
   // Kelompokkan subscription berdasarkan member
@@ -130,7 +137,7 @@ export const list: AppRouteHandler<ListSubscriptionsRoute> = async (c) => {
     entry.subscriptions.push({
       subscription: row.subscriptions,
       membershipCard: row.membership_cards,
-      branches: groupedBranches.get(row.membership_cards.id) ?? [],
+      branches: groupedBranches.get(row.subscriptions.id) ?? [],
     });
 
     groupedByMember.set(memberId, entry);
@@ -191,19 +198,27 @@ export const extend: AppRouteHandler<ExtendSubscriptionRoutes> = async (c) => {
     createdBy,
   }).returning();
 
-  // 4. Hapus semua relasi cabang lama
-  await db
-    .delete(membershipCardBranches)
+  // 4. Tambahkan relasi subscription -> branches
+  await db.insert(subscriptionBranches).values(
+    branchIds.map(branchId => ({
+      subscriptionId: subscription.id,
+      branchId,
+    })),
+  );
+
+  // 5. Update membershipCardBranches hanya jika branch baru belum pernah ditambahkan
+  const existingRel = await db
+    .select({ branchId: membershipCardBranches.branchId })
+    .from(membershipCardBranches)
     .where(eq(membershipCardBranches.membershipCardId, membershipCardId));
 
-  // 5. Tambahkan relasi cabang terbaru
-  if (branchIds.length > 0) {
-    await db.insert(membershipCardBranches).values(
-      branchIds.map(branchId => ({
-        membershipCardId,
-        branchId,
-      })),
-    );
+  const existingRelSet = new Set(existingRel.map(rel => rel.branchId));
+  const newRelations = branchIds
+    .filter(branchId => !existingRelSet.has(branchId))
+    .map(branchId => ({ membershipCardId, branchId }));
+
+  if (newRelations.length > 0) {
+    await db.insert(membershipCardBranches).values(newRelations);
   }
 
   return c.json({

@@ -112,3 +112,13 @@ export const visitLogs = pgTable("visit_logs", {
 });
 
 export const visitLogsSelectSchema = createSelectSchema(visitLogs);
+
+// subscription_branches table
+export const subscriptionBranches = pgTable("subscription_branches", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  subscriptionId: uuid("subscription_id").notNull().references(() => subscriptions.id, { onDelete: "cascade" }),
+  branchId: uuid("branch_id").references(() => branches.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const subscriptionBranchesSelectSchema = createSelectSchema(subscriptionBranches);

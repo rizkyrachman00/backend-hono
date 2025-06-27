@@ -8,6 +8,13 @@
       "when": 1749530874763,
       "tag": "0000_clammy_silverclaw",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751045630295,
+      "tag": "0001_abandoned_tomorrow_man",
+      "breakpoints": true
     }
   ]
 }
