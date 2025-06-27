@@ -2,7 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 
-import { visitLogsSelectSchema } from "@/db/schema.js";
+import { visitLogListSchema } from "@/openapi/schemas/visit-log.schemas.js";
 
 const tags = ["Visit Logs"];
 
@@ -12,7 +12,7 @@ export const list = createRoute({
   tags,
   responses: {
     [HTTPStatusCode.OK]: jsonContent(
-      z.array(visitLogsSelectSchema),
+      visitLogListSchema,
       "List visit logs",
     ),
   },
