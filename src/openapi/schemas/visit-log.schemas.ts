@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// GET /visit-logs
 export const visitLogItemSchema = z.object({
   id: z.string(),
   type: z.enum(["member", "guest"]),
@@ -26,3 +27,17 @@ export const visitLogItemSchema = z.object({
 });
 
 export const visitLogListSchema = z.array(visitLogItemSchema);
+
+// POST /checkin
+export const checkinBodySchema = z.object({
+  type: z.enum(["member", "guest"]),
+  memberId: z.string().uuid().optional(), // jika member
+  guestName: z.string().optional(), // jika guest
+  guestPhone: z.string().optional(),
+  branchId: z.string().uuid(),
+});
+
+export const checkinResponseSchema = z.object({
+  message: z.string(),
+  visitLogId: z.string(),
+});
