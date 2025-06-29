@@ -23,18 +23,28 @@ publicAccessRoutes.forEach((route) => {
   app.route("/", route);
 });
 
-// Admin access
+// Authenticated (no admin required)
+const authOnlyRoutes = [
+  checkin,
+];
+
+const authOnlyRouter = createApp().use(clerkAuthMiddleware);
+authOnlyRoutes.forEach((route) => {
+  authOnlyRouter.route("/", route);
+});
+
+app.route("/", authOnlyRouter);
+
+// Admin-only access
 const adminAccessRoutes = [
   members,
   subscriptions,
   visitLogs,
-  checkin,
 ];
 
 const adminRestrictedRouter = createApp()
   .use(clerkAuthMiddleware)
   .use(requireAdminMiddleware);
-
 adminAccessRoutes.forEach((route) => {
   adminRestrictedRouter.route("/", route);
 });
