@@ -67,7 +67,10 @@ export const deleteSubscriptionParams = z.object({
 
 // --- Schema untuk response sukses DELETE /subscription/:id
 export const deleteSubscriptionSuccessResponse = z.object({
-  message: z.literal("Subscription berhasil dihapus"),
+  message: z.enum([
+    "Subscription berhasil dihapus (soft delete)",
+    "Status Subscription Sudah Nonaktif (deletedAt != null)",
+  ]),
 });
 
 // --- Schema untuk response gagal (not found)

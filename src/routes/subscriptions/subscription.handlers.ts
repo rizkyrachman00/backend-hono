@@ -245,18 +245,22 @@ export const deleteSubscription: AppRouteHandler<DeleteSubscriptionRoutes> = asy
     );
   }
 
-  // Hapus relasi dari subscription_branches
-  await db
-    .delete(subscriptionBranches)
-    .where(eq(subscriptionBranches.subscriptionId, id));
+  // Cek apakah sudah dihapus sebelumnya
+  if (existing.deletedAt) {
+    return c.json(
+      { message: "Status Subscription Sudah Nonaktif (deletedAt != null)" },
+      HTTPStatusCode.OK,
+    );
+  }
 
-  // Hapus subscription itu sendiri
+  // Soft delete
   await db
-    .delete(subscriptions)
+    .update(subscriptions)
+    .set({ deletedAt: new Date() })
     .where(eq(subscriptions.id, id));
 
   return c.json(
-    { message: "Subscription berhasil dihapus" },
+    { message: "Subscription berhasil dihapus (soft delete)" },
     HTTPStatusCode.OK,
   );
 };

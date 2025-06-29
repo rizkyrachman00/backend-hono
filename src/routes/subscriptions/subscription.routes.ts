@@ -74,7 +74,7 @@ export const deleteSubscription = createRoute({
   responses: {
     [HTTPStatusCode.OK]: jsonContent(
       deleteSubscriptionSuccessResponse,
-      "Subscription berhasil dihapus",
+      "Subscription berhasil dihapus atau sudah nonaktif (deletedAt != null)",
     ),
     [HTTPStatusCode.NOT_FOUND]: jsonContent(
       deleteSubscriptionNotFoundResponse,
