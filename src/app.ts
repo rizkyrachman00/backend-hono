@@ -4,6 +4,7 @@ import { clerkAuthMiddleware } from "./middlewares/clerk.auth.js";
 import { requireAdminMiddleware } from "./middlewares/require.admin.js";
 import branches from "./routes/branches/branch.index.js";
 import checkin from "./routes/check-in/check-in.index.js";
+import checkSituasi from "./routes/check-situasi/check-situasi.index.js";
 import index from "./routes/index.route.js";
 import members from "./routes/members/member.index.js";
 import subscriptions from "./routes/subscriptions/subscription.index.js";
@@ -17,6 +18,7 @@ configureOpenAPI(app);
 const publicAccessRoutes = [
   index,
   branches,
+  checkSituasi,
 ];
 
 publicAccessRoutes.forEach((route) => {

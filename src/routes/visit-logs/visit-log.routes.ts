@@ -6,6 +6,7 @@ import { visitLogListSchema } from "@/openapi/schemas/visit-log.schemas.js";
 
 const tags = ["Visit Logs"];
 
+// GET /visit-logs
 export const list = createRoute({
   path: "/visit-logs",
   method: "get",
