@@ -3,7 +3,7 @@ import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { createSubscriptionBody, createSubscriptionResponse, extendSubscriptionBody, extendSubscriptionErrorResponse, extendSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
+import { createSubscriptionBody, createSubscriptionResponse, deleteSubscriptionNotFoundResponse, deleteSubscriptionParams, deleteSubscriptionSuccessResponse, extendSubscriptionBody, extendSubscriptionErrorResponse, extendSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
 
 const tags = ["Subscriptions"];
 
@@ -43,6 +43,7 @@ export const list = createRoute({
   },
 });
 
+// POST /subscription/extend
 export const extend = createRoute({
   method: "post",
   path: "/subscription/extend",
@@ -62,6 +63,27 @@ export const extend = createRoute({
   },
 });
 
+// DELETE /subscription/:id
+export const deleteSubscription = createRoute({
+  method: "delete",
+  path: "/subscription/:id",
+  tags,
+  request: {
+    params: deleteSubscriptionParams,
+  },
+  responses: {
+    [HTTPStatusCode.OK]: jsonContent(
+      deleteSubscriptionSuccessResponse,
+      "Subscription berhasil dihapus",
+    ),
+    [HTTPStatusCode.NOT_FOUND]: jsonContent(
+      deleteSubscriptionNotFoundResponse,
+      "Subscription tidak ditemukan",
+    ),
+  },
+});
+
 export type CreateSubscriptionRoutes = typeof create;
 export type ListSubscriptionsRoute = typeof list;
 export type ExtendSubscriptionRoutes = typeof extend;
+export type DeleteSubscriptionRoutes = typeof deleteSubscription;

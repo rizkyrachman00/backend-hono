@@ -15,7 +15,7 @@ import {
   subscriptions,
 } from "@/db/schema.js";
 
-import type { CreateSubscriptionRoutes, ExtendSubscriptionRoutes, ListSubscriptionsRoute } from "./subscription.routes.js";
+import type { CreateSubscriptionRoutes, DeleteSubscriptionRoutes, ExtendSubscriptionRoutes, ListSubscriptionsRoute } from "./subscription.routes.js";
 
 // POST /subscription
 export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
@@ -225,4 +225,38 @@ export const extend: AppRouteHandler<ExtendSubscriptionRoutes> = async (c) => {
     message: "Subscription extended successfully",
     subscriptionId: subscription.id,
   }, HTTPStatusCode.CREATED);
+};
+
+// DELETE /subscription/:id
+export const deleteSubscription: AppRouteHandler<DeleteSubscriptionRoutes> = async (c) => {
+  const { id } = c.req.valid("param");
+
+  // Cek apakah subscription ada
+  const existing = await db.query.subscriptions.findFirst({
+    where(fields, op) {
+      return op.eq(fields.id, id);
+    },
+  });
+
+  if (!existing) {
+    return c.json(
+      { message: "Subscription tidak ditemukan" },
+      HTTPStatusCode.NOT_FOUND,
+    );
+  }
+
+  // Hapus relasi dari subscription_branches
+  await db
+    .delete(subscriptionBranches)
+    .where(eq(subscriptionBranches.subscriptionId, id));
+
+  // Hapus subscription itu sendiri
+  await db
+    .delete(subscriptions)
+    .where(eq(subscriptions.id, id));
+
+  return c.json(
+    { message: "Subscription berhasil dihapus" },
+    HTTPStatusCode.OK,
+  );
 };

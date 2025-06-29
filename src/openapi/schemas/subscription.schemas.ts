@@ -59,3 +59,18 @@ export const extendSubscriptionErrorResponse = z.object({
   message: z.string(),
   invalidBranchIds: z.array(z.string().uuid()).optional(),
 });
+
+// --- Schema untuk param :id pada DELETE /subscription/:id
+export const deleteSubscriptionParams = z.object({
+  id: z.string().uuid().openapi("id").describe("UUID subscription yang ingin dihapus"),
+});
+
+// --- Schema untuk response sukses DELETE /subscription/:id
+export const deleteSubscriptionSuccessResponse = z.object({
+  message: z.literal("Subscription berhasil dihapus"),
+});
+
+// --- Schema untuk response gagal (not found)
+export const deleteSubscriptionNotFoundResponse = z.object({
+  message: z.literal("Subscription tidak ditemukan"),
+});
