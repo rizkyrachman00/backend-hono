@@ -21,6 +21,11 @@ export const createSubscriptionResponse = z.object({
   subscription: subscriptionsSelectSchema,
 });
 
+// POST /subscription
+export const conflictResponse = z.object({
+  message: z.string(),
+});
+
 // GET /subscriptions
 export const memberSubscriptionItemSchema = z.object({
   membershipCard: membershipCardsSelectSchema,

@@ -14,6 +14,7 @@ import {
   subscriptionBranches,
   subscriptions,
 } from "@/db/schema.js";
+import { validationError } from "@/openapi/schemas/validation-error.js";
 
 import type { CreateSubscriptionRoutes, DeleteSubscriptionRoutes, ExtendSubscriptionRoutes, ListSubscriptionsRoute } from "./subscription.routes.js";
 
@@ -22,40 +23,109 @@ export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
   const { member, branchIds, activeSince, activeUntil } = c.req.valid("json");
   const createdBy = c.get("user")?.email ?? "system";
 
-  // 1. Cek apakah member sudah ada (berdasarkan phone dan/atau email)
+  // --- VALIDASI ---
+  const issues: {
+    code: string;
+    path: (string | number)[];
+    message?: string;
+  }[] = [];
+
+  // 1. Cek duplikasi member
   const existing = await db.query.members.findFirst({
-    where(fields, operators) {
+    where(fields, op) {
       return or(
-        operators.eq(fields.phone, member.phone),
-        member.email ? operators.eq(fields.email, member.email) : undefined,
+        op.eq(fields.phone, member.phone),
+        member.email ? op.eq(fields.email, member.email) : undefined,
       );
     },
   });
 
-  let memberId: MemberId;
-
   if (existing) {
-    memberId = existing.id;
-  }
-  else {
-    // 2. Insert member baru
-    const [newMember] = await db.insert(members)
-      .values({
-        name: member.name,
-        phone: member.phone,
-        email: member.email ?? null,
-      })
-      .returning();
-
-    memberId = newMember.id;
+    return c.json(
+      { message: "Member dengan nomor telepon atau email ini sudah terdaftar." },
+      HTTPStatusCode.CONFLICT,
+    );
   }
 
-  // 3. Buat kartu membership
+  // 2. Validasi tanggal
+  const parsedActiveSince = new Date(activeSince);
+  const parsedActiveUntil = new Date(activeUntil);
+
+  if (!activeSince) {
+    issues.push({
+      code: "missing_field",
+      path: ["activeSince"],
+      message: "Tanggal mulai tidak boleh kosong.",
+    });
+  }
+
+  if (!activeUntil) {
+    issues.push({
+      code: "missing_field",
+      path: ["activeUntil"],
+      message: "Tanggal akhir tidak boleh kosong.",
+    });
+  }
+
+  if (Number.isNaN(parsedActiveSince.getTime())) {
+    issues.push({
+      code: "invalid_date",
+      path: ["activeSince"],
+      message: "Format tanggal mulai tidak valid.",
+    });
+  }
+
+  if (Number.isNaN(parsedActiveUntil.getTime())) {
+    issues.push({
+      code: "invalid_date",
+      path: ["activeUntil"],
+      message: "Format tanggal akhir tidak valid.",
+    });
+  }
+
+  if (parsedActiveSince >= parsedActiveUntil) {
+    issues.push({
+      code: "date_order",
+      path: ["activeUntil"],
+      message: "Tanggal akhir harus lebih besar dari tanggal mulai.",
+    });
+  }
+
+  // 3. Validasi branchIds
+  const existingBranchIds = new Set(
+    (await db.select({ id: branches.id }).from(branches)).map(b => b.id),
+  );
+  const invalidBranchIds = branchIds.filter(id => !existingBranchIds.has(id));
+
+  if (invalidBranchIds.length > 0) {
+    issues.push({
+      code: "invalid_enum_value",
+      path: ["branchIds"],
+      message: `Branch ID tidak valid: ${invalidBranchIds.join(", ")}`,
+    });
+  }
+
+  // 4. Return jika ada error
+  if (issues.length > 0) {
+    return validationError(c, issues);
+  }
+
+  // --- BEGIN INSERT DATA ---
+
+  const [newMember] = await db.insert(members)
+    .values({
+      name: member.name,
+      phone: member.phone,
+      email: member.email ?? null,
+    })
+    .returning();
+
+  const memberId: MemberId = newMember.id;
+
   const [card] = await db.insert(membershipCards)
     .values({ memberId })
     .returning();
 
-  // 4. Kaitkan kartu dengan cabang
   await db.insert(membershipCardBranches).values(
     branchIds.map(branchId => ({
       membershipCardId: card.id,
@@ -63,17 +133,15 @@ export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
     })),
   );
 
-  // 5. Buat subscription
   const [subscription] = await db.insert(subscriptions)
     .values({
       membershipCardId: card.id,
-      activeSince: new Date(activeSince),
-      activeUntil: new Date(activeUntil),
+      activeSince: parsedActiveSince,
+      activeUntil: parsedActiveUntil,
       createdBy,
     })
     .returning();
 
-  // 5b. Kaitkan cabang ke subscription
   await db.insert(subscriptionBranches).values(
     branchIds.map(branchId => ({
       subscriptionId: subscription.id,
@@ -81,7 +149,6 @@ export const create: AppRouteHandler<CreateSubscriptionRoutes> = async (c) => {
     })),
   );
 
-  // 6. Kembalikan response sesuai schema openapi
   return c.json({ subscription }, HTTPStatusCode.CREATED);
 };
 

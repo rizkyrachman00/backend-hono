@@ -3,7 +3,7 @@ import * as HTTPStatusCode from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { createSubscriptionBody, createSubscriptionResponse, deleteSubscriptionNotFoundResponse, deleteSubscriptionParams, deleteSubscriptionSuccessResponse, extendSubscriptionBody, extendSubscriptionErrorResponse, extendSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
+import { conflictResponse, createSubscriptionBody, createSubscriptionResponse, deleteSubscriptionNotFoundResponse, deleteSubscriptionParams, deleteSubscriptionSuccessResponse, extendSubscriptionBody, extendSubscriptionErrorResponse, extendSubscriptionResponse, memberWithSubscriptionsListResponseSchema } from "@/openapi/schemas/subscription.schemas.js";
 
 const tags = ["Subscriptions"];
 
@@ -26,6 +26,10 @@ export const create = createRoute({
     [HTTPStatusCode.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(createSubscriptionBody),
       "Validasi gagal. Periksa kembali format atau data yang dikirim.",
+    ),
+    [HTTPStatusCode.CONFLICT]: jsonContent(
+      conflictResponse,
+      "Member sudah terdaftar berdasarkan nomor telepon atau email.",
     ),
   },
 });
