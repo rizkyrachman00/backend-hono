@@ -35,6 +35,7 @@ export const checkinBodySchema = z.object({
   guestName: z.string().optional(), // jika guest
   guestPhone: z.string().optional(),
   branchId: z.string().uuid(),
+  subscriptionId: z.string().uuid().optional(),
 });
 
 export const checkinResponseSchema = z.object({

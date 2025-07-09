@@ -24,7 +24,10 @@ export const checkin: AppRouteHandler<CheckinRoute> = async (c) => {
 
     // Ambil semua subscription aktif milik member
     const activeSubscriptions = await db
-      .select({ id: subscriptions.id, deletedAt: subscriptions.deletedAt })
+      .select({
+        id: subscriptions.id,
+        deletedAt: subscriptions.deletedAt,
+      })
       .from(subscriptions)
       .innerJoin(
         membershipCards,
@@ -39,9 +42,28 @@ export const checkin: AppRouteHandler<CheckinRoute> = async (c) => {
       );
 
     // Hanya ambil subscription yang belum dihapus (deletedAt = null)
-    const activeValidSubscriptions = activeSubscriptions.filter(s => !s.deletedAt);
+    const activeValidSubscriptions = activeSubscriptions
+      .filter(s => !s.deletedAt);
 
-    const subscriptionIds = activeValidSubscriptions.map(s => s.id);
+    // Jika input menyertakan subscriptionId, validasi hanya untuk ID tersebut
+    let subscriptionIds: string[] = [];
+
+    if (!input.subscriptionId) {
+      return c.json(
+        { message: "subscriptionId diperlukan" },
+        422,
+      );
+    }
+
+    const match = activeValidSubscriptions.find(s => s.id === input.subscriptionId);
+    if (!match) {
+      return c.json(
+        { message: "Subscription ID tidak valid atau sudah tidak aktif" },
+        422,
+      );
+    }
+
+    subscriptionIds = [input.subscriptionId];
 
     if (subscriptionIds.length === 0) {
       return c.json(
