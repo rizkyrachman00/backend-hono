@@ -24,7 +24,7 @@ export const checkin: AppRouteHandler<CheckinRoute> = async (c) => {
 
     // Ambil semua subscription aktif milik member
     const activeSubscriptions = await db
-      .select({ id: subscriptions.id })
+      .select({ id: subscriptions.id, deletedAt: subscriptions.deletedAt })
       .from(subscriptions)
       .innerJoin(
         membershipCards,
@@ -38,7 +38,10 @@ export const checkin: AppRouteHandler<CheckinRoute> = async (c) => {
         ),
       );
 
-    const subscriptionIds = activeSubscriptions.map(s => s.id);
+    // Hanya ambil subscription yang belum dihapus (deletedAt = null)
+    const activeValidSubscriptions = activeSubscriptions.filter(s => !s.deletedAt);
+
+    const subscriptionIds = activeValidSubscriptions.map(s => s.id);
 
     if (subscriptionIds.length === 0) {
       return c.json(
